@@ -16,14 +16,13 @@ serve(async (req) => {
   }
 
   try {
-    console.log('Initializing OpenAI client with v2 beta header');
+    console.log('Initializing OpenAI client');
     const openai = new OpenAI({
       apiKey: Deno.env.get('OPENAI_API_KEY'),
-      defaultHeaders: {
-        'OpenAI-Beta': 'assistants=v2'  // Updated to v2
-      }
+      defaultQuery: { 'OpenAI-Beta': 'assistants=v2' },
+      defaultHeaders: { 'OpenAI-Beta': 'assistants=v2' }
     });
-    console.log('OpenAI client initialized with v2 headers');
+    console.log('OpenAI client initialized with v2 configuration');
 
     const { textContent, context, fileContent } = await req.json();
     console.log('Received content:', { 
@@ -48,8 +47,11 @@ ${fileContent ? `\nFile Content: ${fileContent}` : ''}`
     console.log('Thread created with ID:', thread.id);
 
     // Run the assistant
-    console.log('Starting assistant run with v2 configuration');
+    console.log('Starting assistant run');
     const assistantId = Deno.env.get('OPENAI_ASSISTANT_ID');
+    if (!assistantId) {
+      throw new Error('OPENAI_ASSISTANT_ID is not set');
+    }
     console.log('Using assistant ID:', assistantId);
     
     const run = await openai.beta.threads.runs.create(thread.id, {
@@ -78,7 +80,7 @@ ${fileContent ? `\nFile Content: ${fileContent}` : ''}`
     console.log('Run completed successfully');
 
     // Get the messages using v2 API
-    console.log('Retrieving messages with v2 API');
+    console.log('Retrieving messages');
     const messages = await openai.beta.threads.messages.list(thread.id);
     const lastMessage = messages.data[0];
     console.log('Retrieved last message:', lastMessage.id);
