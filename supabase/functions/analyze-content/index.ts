@@ -18,11 +18,8 @@ serve(async (req) => {
   try {
     console.log('Initializing OpenAI client');
     const openai = new OpenAI({
-      apiKey: Deno.env.get('OPENAI_API_KEY'),
-      defaultQuery: { 'OpenAI-Beta': 'assistants=v2' },
-      defaultHeaders: { 'OpenAI-Beta': 'assistants=v2' }
+      apiKey: Deno.env.get('OPENAI_API_KEY')
     });
-    console.log('OpenAI client initialized with v2 configuration');
 
     const { textContent, context, fileContent } = await req.json();
     console.log('Received content:', { 
@@ -31,62 +28,33 @@ serve(async (req) => {
       hasFileContent: Boolean(fileContent) 
     });
 
-    // Create a thread with v2 structure
-    console.log('Creating new thread with v2 structure');
-    const thread = await openai.beta.threads.create({
+    // Prepare the content for analysis
+    const contentToAnalyze = `
+      ${textContent ? `Content: ${textContent}\n` : ''}
+      ${context ? `Context: ${context}\n` : ''}
+      ${fileContent ? `File Content: ${fileContent}\n` : ''}
+    `;
+
+    console.log('Making request to OpenAI Chat Completions API');
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
       messages: [
         {
+          role: "system",
+          content: "You are an AI assistant that analyzes content for potential controversy or sensitive topics. Provide clear, detailed feedback about any concerning elements and suggest improvements if needed."
+        },
+        {
           role: "user",
-          content: `Please analyze this content for potential controversy:
-${textContent ? `\nText Content: ${textContent}` : ''}
-${context ? `\nContext: ${context}` : ''}
-${fileContent ? `\nFile Content: ${fileContent}` : ''}`
+          content: `Please analyze this content for potential controversy:\n${contentToAnalyze}`
         }
       ]
     });
-    console.log('Thread created with ID:', thread.id);
 
-    // Run the assistant
-    console.log('Starting assistant run');
-    const assistantId = Deno.env.get('OPENAI_ASSISTANT_ID');
-    if (!assistantId) {
-      throw new Error('OPENAI_ASSISTANT_ID is not set');
-    }
-    console.log('Using assistant ID:', assistantId);
-    
-    const run = await openai.beta.threads.runs.create(thread.id, {
-      assistant_id: assistantId,
-    });
-    console.log('Run created with ID:', run.id);
-
-    // Wait for the run to complete
-    let runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
-    console.log('Initial run status:', runStatus.status);
-    
-    while (runStatus.status !== "completed") {
-      if (runStatus.status === "failed") {
-        console.error('Run failed:', runStatus.last_error);
-        throw new Error(`Assistant run failed: ${runStatus.last_error?.message}`);
-      }
-      if (runStatus.status === "requires_action") {
-        console.log('Run requires action:', runStatus.required_action);
-        throw new Error('Assistant run requires action - not implemented');
-      }
-      
-      console.log('Waiting for run completion. Current status:', runStatus.status);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
-    }
-    console.log('Run completed successfully');
-
-    // Get the messages using v2 API
-    console.log('Retrieving messages');
-    const messages = await openai.beta.threads.messages.list(thread.id);
-    const lastMessage = messages.data[0];
-    console.log('Retrieved last message:', lastMessage.id);
+    console.log('Received response from OpenAI');
+    const analysis = completion.choices[0].message.content;
 
     return new Response(JSON.stringify({ 
-      analysis: lastMessage.content[0].text.value 
+      analysis 
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
