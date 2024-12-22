@@ -43,7 +43,7 @@ serve(async (req) => {
       ${fileContent ? `File Content: ${fileContent}\n` : ''}
     `;
 
-    console.log('Creating thread');
+    console.log('Creating thread with initial message');
     const thread = await openai.beta.threads.create({
       messages: [
         {
@@ -53,12 +53,10 @@ serve(async (req) => {
       ]
     });
 
-    console.log('Running assistant on thread');
+    console.log('Creating run with assistant');
     const run = await openai.beta.threads.runs.create(
       thread.id,
-      { 
-        assistant_id: assistantId,
-      }
+      { assistant_id: assistantId }
     );
 
     // Poll for completion
@@ -88,7 +86,7 @@ serve(async (req) => {
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
-    console.log('Analysis completed');
+    console.log('Analysis completed successfully');
     return new Response(JSON.stringify({ 
       analysis 
     }), {
