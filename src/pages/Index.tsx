@@ -16,10 +16,12 @@ const Index = () => {
   const { toast } = useToast();
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('File input changed');
     const file = e.target.files?.[0];
     if (!file) return;
 
     if (file.type !== "application/pdf" && !file.type.startsWith("image/")) {
+      console.log('Invalid file type:', file.type);
       toast({
         title: "Invalid file type",
         description: "Please upload a PDF or image file",
@@ -29,20 +31,30 @@ const Index = () => {
     }
 
     setFile(file);
+    console.log('File set:', file.name);
 
     if (file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onload = (e) => {
+        console.log('Image file loaded');
         setFileContent(`[Image uploaded: ${file.name}]`);
       };
       reader.readAsDataURL(file);
     } else {
+      console.log('PDF file set');
       setFileContent(`[PDF uploaded: ${file.name}]`);
     }
   };
 
   const handleAnalyze = async () => {
+    console.log('Starting analysis with:', {
+      hasTextContent: !!textContent,
+      hasContext: !!context,
+      hasFile: !!file
+    });
+
     if (!textContent && !context && !file) {
+      console.log('No content provided');
       toast({
         title: "Missing content",
         description: "Please provide at least one input (text, context, or file)",
@@ -53,6 +65,7 @@ const Index = () => {
 
     setIsAnalyzing(true);
     try {
+      console.log('Calling analyze-content function');
       const { data, error } = await supabase.functions.invoke('analyze-content', {
         body: {
           textContent,
@@ -61,10 +74,15 @@ const Index = () => {
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw error;
+      }
+      
+      console.log('Analysis completed successfully');
       setAnalysis(data.analysis);
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error details:', error);
       toast({
         title: "Analysis failed",
         description: "There was an error analyzing your content. Please try again.",
