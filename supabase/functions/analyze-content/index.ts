@@ -16,11 +16,11 @@ serve(async (req) => {
   }
 
   try {
-    console.log('Initializing OpenAI client');
+    console.log('Initializing OpenAI client with v2 beta header');
     const openai = new OpenAI({
       apiKey: Deno.env.get('OPENAI_API_KEY'),
       defaultHeaders: {
-        'OpenAI-Beta': 'assistants=v2'
+        'OpenAI-Beta': 'assistants=v2'  // Updated to v2
       }
     });
     console.log('OpenAI client initialized with v2 headers');
@@ -32,33 +32,30 @@ serve(async (req) => {
       hasFileContent: Boolean(fileContent) 
     });
 
-    // Create a thread
-    console.log('Creating new thread');
-    const thread = await openai.beta.threads.create();
-    console.log('Thread created:', thread.id);
-
-    // Add messages to the thread
-    let messageContent = "Please analyze this content for potential controversy:\n\n";
-    if (textContent) messageContent += `Text Content: ${textContent}\n\n`;
-    if (context) messageContent += `Context: ${context}\n\n`;
-    if (fileContent) messageContent += `File Content: ${fileContent}\n\n`;
-
-    console.log('Adding message to thread');
-    const message = await openai.beta.threads.messages.create(thread.id, {
-      role: "user",
-      content: messageContent,
+    // Create a thread with v2 structure
+    console.log('Creating new thread with v2 structure');
+    const thread = await openai.beta.threads.create({
+      messages: [
+        {
+          role: "user",
+          content: `Please analyze this content for potential controversy:
+${textContent ? `\nText Content: ${textContent}` : ''}
+${context ? `\nContext: ${context}` : ''}
+${fileContent ? `\nFile Content: ${fileContent}` : ''}`
+        }
+      ]
     });
-    console.log('Message added:', message.id);
+    console.log('Thread created with ID:', thread.id);
 
     // Run the assistant
-    console.log('Starting assistant run');
+    console.log('Starting assistant run with v2 configuration');
     const assistantId = Deno.env.get('OPENAI_ASSISTANT_ID');
     console.log('Using assistant ID:', assistantId);
     
     const run = await openai.beta.threads.runs.create(thread.id, {
       assistant_id: assistantId,
     });
-    console.log('Run created:', run.id);
+    console.log('Run created with ID:', run.id);
 
     // Wait for the run to complete
     let runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
@@ -80,8 +77,8 @@ serve(async (req) => {
     }
     console.log('Run completed successfully');
 
-    // Get the messages
-    console.log('Retrieving messages');
+    // Get the messages using v2 API
+    console.log('Retrieving messages with v2 API');
     const messages = await openai.beta.threads.messages.list(thread.id);
     const lastMessage = messages.data[0];
     console.log('Retrieved last message:', lastMessage.id);
