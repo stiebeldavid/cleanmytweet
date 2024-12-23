@@ -5,9 +5,14 @@ export const HeroSection = () => {
       <div className="relative">
         <h1 className="text-6xl md:text-7xl font-extrabold text-white mb-4 animate-fade-in">
           Clean Your Tweets
-          <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 to-teal-200 mt-1">
-            Before They Go Viral
-          </span>
+          <div className="relative">
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 to-teal-200 mt-1">
+              Before They Go Viral
+            </span>
+            <span className="block text-sm italic text-right text-cyan-200/70 mt-1">
+              (...for the wrong reason)
+            </span>
+          </div>
         </h1>
         <div className="absolute -top-16 -left-20 w-40 h-40 bg-cyan-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
         <div className="absolute -bottom-16 -right-20 w-40 h-40 bg-teal-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
