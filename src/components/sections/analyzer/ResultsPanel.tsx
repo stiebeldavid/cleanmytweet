@@ -44,7 +44,7 @@ export const ResultsPanel = ({ analysis }: ResultsPanelProps) => {
       </h2>
       {analysis ? (
         <div className="space-y-6">
-          <Accordion type="single" collapsible className="w-full">
+          <Accordion type="single" collapsible defaultValue="key-issues" className="w-full">
             <AccordionItem value="key-issues">
               <AccordionTrigger className="flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5 text-red-500" />

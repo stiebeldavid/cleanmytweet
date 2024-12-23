@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { MessagePanel } from "./analyzer/MessagePanel";
 import { InputPanel } from "./analyzer/InputPanel";
 import { ResultsPanel } from "./analyzer/ResultsPanel";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface AnalysisResult {
   keyIssues: {
@@ -30,6 +31,8 @@ export const ContentAnalyzerSection = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showWaitlist, setShowWaitlist] = useState(false);
   const { toast } = useToast();
+  const resultsRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
 
   const handleAnalyze = async () => {
     if (!textContent && !context) {
@@ -43,7 +46,6 @@ export const ContentAnalyzerSection = () => {
 
     setIsAnalyzing(true);
     try {
-      // First, analyze the content
       const { data: analysisData, error: analysisError } = await supabase.functions.invoke('analyze-content', {
         body: { textContent, context },
       });
@@ -53,7 +55,13 @@ export const ContentAnalyzerSection = () => {
       const analysisResults = analysisData.analysis;
       setAnalysis(analysisResults);
 
-      // Then, send notification with the complete analysis results
+      // Scroll to results on mobile after a short delay to ensure rendering
+      if (isMobile && resultsRef.current) {
+        setTimeout(() => {
+          resultsRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
+
       await supabase.functions.invoke('send-notification', {
         body: {
           type: 'content-analysis',
@@ -90,7 +98,9 @@ export const ContentAnalyzerSection = () => {
         onAnalyze={handleAnalyze}
         onShowWaitlist={() => setShowWaitlist(true)}
       />
-      <ResultsPanel analysis={analysis} />
+      <div ref={resultsRef}>
+        <ResultsPanel analysis={analysis} />
+      </div>
     </div>
   );
 };
