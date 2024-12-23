@@ -66,7 +66,7 @@ export const InputPanel = ({
           <div className="flex flex-col items-center justify-center relative z-10 space-y-2">
             <div className="flex items-center justify-center space-x-2">
               <Upload className="h-5 w-5" />
-              <span className="font-semibold text-base">Upload Images & Media (Coming Soon!)</span>
+              <span className="font-semibold text-base">Upload Images & Media</span>
             </div>
             <div className="flex items-center justify-center space-x-4 py-1">
               <div className="flex flex-col items-center">
@@ -86,6 +86,7 @@ export const InputPanel = ({
                 <span className="text-xs">PDFs</span>
               </div>
             </div>
+            <span className="text-sm italic">Coming Soon!</span>
           </div>
         </Button>
 
