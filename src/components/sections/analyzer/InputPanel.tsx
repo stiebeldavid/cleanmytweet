@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Loader2, Upload } from "lucide-react";
+import { Loader2, Upload, PenTool } from "lucide-react";
 
 interface InputPanelProps {
   textContent: string;
@@ -25,8 +25,15 @@ export const InputPanel = ({
   onShowWaitlist,
 }: InputPanelProps) => {
   return (
-    <div className="space-y-6 bg-white p-6 rounded-xl shadow-lg border border-gray-100">
-      <div>
+    <div className="relative space-y-6 bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+      <div className="absolute -top-3 -left-3 transform -rotate-6">
+        <div className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg">
+          <PenTool className="h-4 w-4" />
+          <span className="font-bold">Analyze Your Content Here!</span>
+        </div>
+      </div>
+
+      <div className="mt-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Content to Analyze
         </label>
