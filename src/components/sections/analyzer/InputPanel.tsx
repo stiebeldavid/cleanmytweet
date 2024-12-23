@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Loader2, Upload, PenTool, FileIcon, ImageIcon, Video, FileAudio, FileText, Twitter, Users } from "lucide-react";
+import { Loader2, Upload, PenTool, ImageIcon, Video, Twitter, Users } from "lucide-react";
 import { WaitlistModal } from "@/components/WaitlistModal";
 import { useState } from "react";
 
@@ -77,24 +77,16 @@ export const InputPanel = ({
           <div className="flex flex-col items-center justify-center relative z-10 space-y-2">
             <div className="flex items-center justify-center space-x-2">
               <Upload className="h-5 w-5" />
-              <span className="font-semibold text-base">Upload Images & Media</span>
+              <span className="font-semibold text-base">Upload Media</span>
             </div>
-            <div className="flex items-center justify-center space-x-4 py-1">
+            <div className="flex items-center justify-center space-x-8 py-1">
               <div className="flex flex-col items-center">
                 <ImageIcon className="h-4 w-4 mb-1" />
                 <span className="text-xs">Images</span>
               </div>
               <div className="flex flex-col items-center">
-                <FileAudio className="h-4 w-4 mb-1" />
-                <span className="text-xs">Audio</span>
-              </div>
-              <div className="flex flex-col items-center">
                 <Video className="h-4 w-4 mb-1" />
                 <span className="text-xs">Video</span>
-              </div>
-              <div className="flex flex-col items-center">
-                <FileText className="h-4 w-4 mb-1" />
-                <span className="text-xs">PDFs</span>
               </div>
             </div>
             <span className="text-sm italic">Coming Soon!</span>
