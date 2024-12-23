@@ -3,61 +3,23 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { Loader2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { Loader2, Upload, AlertTriangle, CheckCircle, Lock } from "lucide-react";
+import { WaitlistModal } from "@/components/WaitlistModal";
 
 const Index = () => {
   const [textContent, setTextContent] = useState("");
   const [context, setContext] = useState("");
-  const [file, setFile] = useState<File | null>(null);
-  const [fileContent, setFileContent] = useState("");
   const [analysis, setAnalysis] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [showWaitlist, setShowWaitlist] = useState(false);
   const { toast } = useToast();
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('File input changed');
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (file.type !== "application/pdf" && !file.type.startsWith("image/")) {
-      console.log('Invalid file type:', file.type);
-      toast({
-        title: "Invalid file type",
-        description: "Please upload a PDF or image file",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setFile(file);
-    console.log('File set:', file.name);
-
-    if (file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        console.log('Image file loaded');
-        setFileContent(`[Image uploaded: ${file.name}]`);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      console.log('PDF file set');
-      setFileContent(`[PDF uploaded: ${file.name}]`);
-    }
-  };
-
   const handleAnalyze = async () => {
-    console.log('Starting analysis with:', {
-      hasTextContent: !!textContent,
-      hasContext: !!context,
-      hasFile: !!file
-    });
-
-    if (!textContent && !context && !file) {
-      console.log('No content provided');
+    console.log('Starting analysis');
+    if (!textContent && !context) {
       toast({
         title: "Missing content",
-        description: "Please provide at least one input (text, context, or file)",
+        description: "Please provide text content or context to analyze",
         variant: "destructive",
       });
       return;
@@ -65,24 +27,15 @@ const Index = () => {
 
     setIsAnalyzing(true);
     try {
-      console.log('Calling analyze-content function');
       const { data, error } = await supabase.functions.invoke('analyze-content', {
-        body: {
-          textContent,
-          context,
-          fileContent,
-        },
+        body: { textContent, context },
       });
 
-      if (error) {
-        console.error('Supabase function error:', error);
-        throw error;
-      }
+      if (error) throw error;
       
-      console.log('Analysis completed successfully');
       setAnalysis(data.analysis);
     } catch (error) {
-      console.error('Error details:', error);
+      console.error('Error:', error);
       toast({
         title: "Analysis failed",
         description: "There was an error analyzing your content. Please try again.",
@@ -94,87 +47,108 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto py-8">
-        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-          Controversy Detection
-        </h1>
-        
-        <div className="grid md:grid-cols-2 gap-8">
-          {/* Input Section */}
-          <div className="space-y-6 bg-white p-6 rounded-lg shadow-sm">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Content to Analyze
-              </label>
-              <Textarea
-                placeholder="Paste your social media post or content here..."
-                className="min-h-[120px]"
-                value={textContent}
-                onChange={(e) => setTextContent(e.target.value)}
-              />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="container mx-auto py-12 px-4">
+        <div className="max-w-4xl mx-auto">
+          {/* Hero Section */}
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              Content Controversy Detection
+            </h1>
+            <p className="text-xl text-gray-600 mb-8">
+              Analyze your content for potential controversy before posting. 
+              Prevent PR disasters and maintain brand reputation.
+            </p>
+            <div className="flex gap-4 justify-center mb-12">
+              <div className="flex items-center gap-2 text-green-600">
+                <CheckCircle className="h-5 w-5" />
+                <span>AI-Powered</span>
+              </div>
+              <div className="flex items-center gap-2 text-blue-600">
+                <AlertTriangle className="h-5 w-5" />
+                <span>Real-time Analysis</span>
+              </div>
+              <div className="flex items-center gap-2 text-purple-600">
+                <Lock className="h-5 w-5" />
+                <span>Secure</span>
+              </div>
             </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Context (Optional)
-              </label>
-              <Input
-                placeholder="Brand/company context or target audience..."
-                value={context}
-                onChange={(e) => setContext(e.target.value)}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Upload File (Optional)
-              </label>
-              <Input
-                type="file"
-                accept="application/pdf,image/*"
-                onChange={handleFileChange}
-              />
-              {file && (
-                <p className="mt-2 text-sm text-gray-500">
-                  Selected file: {file.name}
-                </p>
-              )}
-            </div>
-
-            <Button
-              onClick={handleAnalyze}
-              disabled={isAnalyzing || (!textContent && !context && !file)}
-              className="w-full"
-            >
-              {isAnalyzing ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Analyzing...
-                </>
-              ) : (
-                "Analyze Content"
-              )}
-            </Button>
           </div>
 
-          {/* Results Section */}
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">
-              Analysis Results
-            </h2>
-            {analysis ? (
-              <div className="prose max-w-none">
-                <div className="whitespace-pre-wrap">{analysis}</div>
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Input Section */}
+            <div className="space-y-6 bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Content to Analyze
+                </label>
+                <Textarea
+                  placeholder="Paste your social media post or content here..."
+                  className="min-h-[120px]"
+                  value={textContent}
+                  onChange={(e) => setTextContent(e.target.value)}
+                />
               </div>
-            ) : (
-              <div className="text-gray-500 text-center py-12">
-                Analysis results will appear here after you scan your content.
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Context (Optional)
+                </label>
+                <Input
+                  placeholder="Brand/company context or target audience..."
+                  value={context}
+                  onChange={(e) => setContext(e.target.value)}
+                />
               </div>
-            )}
+
+              <div>
+                <Button
+                  onClick={() => setShowWaitlist(true)}
+                  variant="outline"
+                  className="w-full mb-4 bg-gray-50 hover:bg-gray-100"
+                >
+                  <Upload className="mr-2 h-4 w-4" />
+                  Upload File (Coming Soon)
+                </Button>
+
+                <Button
+                  onClick={handleAnalyze}
+                  disabled={isAnalyzing || (!textContent && !context)}
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                >
+                  {isAnalyzing ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Analyzing...
+                    </>
+                  ) : (
+                    "Analyze Content"
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            {/* Results Section */}
+            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">
+                Analysis Results
+              </h2>
+              {analysis ? (
+                <div className="prose max-w-none">
+                  <div className="whitespace-pre-wrap text-gray-700">{analysis}</div>
+                </div>
+              ) : (
+                <div className="text-gray-500 text-center py-12 bg-gray-50 rounded-lg">
+                  <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                  Analysis results will appear here after you scan your content.
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
+
+      <WaitlistModal open={showWaitlist} onOpenChange={setShowWaitlist} />
     </div>
   );
 };
