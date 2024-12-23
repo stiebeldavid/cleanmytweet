@@ -11,7 +11,7 @@ const disasters = [
   },
   {
     company: "Dove Soap",
-    description: "Controversial advertisement causing brand damage"
+    description: "Controversial advertisement depicting racial insensitivity in soap product marketing"
   }
 ];
 
