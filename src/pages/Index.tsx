@@ -3,7 +3,6 @@ import { HeroSection } from "@/components/sections/HeroSection";
 import { ProductOverview } from "@/components/sections/ProductOverview";
 import { KeyFeatures } from "@/components/sections/KeyFeatures";
 import { Testimonials } from "@/components/sections/Testimonials";
-import { KeyMetrics } from "@/components/sections/KeyMetrics";
 import { PRDisasters } from "@/components/sections/PRDisasters";
 import { ContentAnalyzerSection } from "@/components/sections/ContentAnalyzerSection";
 
@@ -17,7 +16,6 @@ const Index = () => {
       <ProductOverview />
       <KeyFeatures />
       <Testimonials />
-      <KeyMetrics />
       <PRDisasters />
       <WaitlistModal open={false} onOpenChange={() => {}} />
     </div>
