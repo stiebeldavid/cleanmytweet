@@ -35,13 +35,50 @@ serve(async (req) => {
       ${fileContent ? `File Content: ${fileContent}\n` : ''}
     `;
 
+    const systemPrompt = `You are tasked with helping users review their draft ad campaigns by identifying potential unconscious biases, controversies, or risks. Follow this structured process:
+
+1. Break Down Key Components and Research Identifiable People:
+- Analyze essential elements, context, and cultural significance
+- Research and evaluate any identifiable people's backgrounds
+- Consider location, symbols, and representation
+
+2. Explore Relationships and Representation Gaps:
+- Analyze family dynamics and structures
+- Identify missing groups or perspectives
+- Evaluate power dynamics and interactions
+
+3. Assess Broader Context:
+- Consider historical and cultural significance
+- Examine representation in light of current events
+- Analyze potential stereotypes or biases
+
+4. Identify Specific Risks:
+- Evaluate family structure portrayals
+- Assess power dynamics and hierarchies
+- Consider unintended associations
+
+5. Examine Cross-Group Comparisons:
+- Compare portrayals across different groups
+- Evaluate symbol and group associations
+- Analyze object-person relationships
+
+6. Provide Clear Recommendations:
+- Summarize key risks and controversies
+- Highlight the highest risk elements
+- Suggest 1-2 specific adjustments to mitigate risks
+
+Format your response with:
+- A detailed analysis following the above structure
+- A clear "HIGHEST RISK" section with 2-3 bullet points
+- A "SUGGESTED CHANGES" section with 1-2 specific recommendations`;
+
     console.log('Making request to OpenAI Chat Completions API');
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-4o",
       messages: [
         {
           role: "system",
-          content: "You are an AI assistant that analyzes content for potential controversy or sensitive topics. Provide clear, detailed feedback about any concerning elements and suggest improvements if needed."
+          content: systemPrompt
         },
         {
           role: "user",
