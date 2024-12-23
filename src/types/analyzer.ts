@@ -1,4 +1,5 @@
 export interface AnalysisResult {
+  cleanedTweet: string;
   keyIssues: {
     title: string;
     severity: 'high' | 'medium' | 'low';

@@ -1,7 +1,8 @@
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, CheckCircle2 } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 interface AnalysisResult {
+  cleanedTweet: string;
   keyIssues: {
     title: string;
     severity: 'high' | 'medium' | 'low';
@@ -44,6 +45,15 @@ export const ResultsPanel = ({ analysis }: ResultsPanelProps) => {
       </h2>
       {analysis ? (
         <div className="space-y-6">
+          {/* Cleaned Tweet Section */}
+          <div className="bg-gradient-to-r from-cyan-50 to-blue-50 p-4 rounded-lg border-2 border-cyan-200">
+            <div className="flex items-center gap-2 mb-2">
+              <CheckCircle2 className="h-5 w-5 text-cyan-600" />
+              <h3 className="font-semibold text-cyan-900">Cleaned Tweet</h3>
+            </div>
+            <p className="text-gray-800 font-medium">{analysis.cleanedTweet}</p>
+          </div>
+
           <Accordion type="single" collapsible defaultValue="key-issues" className="w-full">
             <AccordionItem value="key-issues">
               <AccordionTrigger className="flex items-center gap-2">

@@ -26,12 +26,20 @@ serve(async (req) => {
       messages: [
         {
           role: "system",
-          content: `You are an AI content analyzer specializing in identifying potential biases, controversies, and risks in ad campaigns and content. 
+          content: `You are an AI content analyzer specializing in improving tweets while making them safer and more effective. 
+          
+Your task is to analyze the provided tweet and return a structured analysis that includes a cleaned/improved version of the tweet.
 
-Your task is to analyze the provided content and return a structured analysis in a strict JSON format.
+The cleaned tweet should:
+1. Maintain the original message's intent
+2. Remove potentially controversial elements
+3. Improve clarity and impact
+4. Stay within Twitter's character limit
+5. Consider the provided context and purpose
 
-Required JSON structure:
+Return your analysis in this exact JSON format:
 {
+  "cleanedTweet": "string (improved version of the tweet)",
   "keyIssues": [
     {
       "title": "string (50 chars max)",
@@ -51,20 +59,11 @@ Required JSON structure:
     "broaderContext": "string (300 chars max)",
     "crossGroupComparisons": "string (300 chars max)"
   }
-}
-
-Important rules:
-1. Return ONLY valid JSON - no markdown, no code blocks, no additional text
-2. Always include all fields in the structure, even if empty
-3. Respect the maximum character limits for each field
-4. Use "severity" values strictly from: "high", "medium", "low"
-5. If no issues are found, return an empty array for keyIssues
-6. If no changes are needed, return an empty array for suggestedChanges
-7. Never use line breaks within strings`
+}`
         },
         {
           role: "user",
-          content: `Please analyze this content:
+          content: `Please analyze this tweet:
 Tweet: ${textContent}
 Purpose: ${purpose || 'Not specified'}
 Context: ${context || 'Not specified'}`
