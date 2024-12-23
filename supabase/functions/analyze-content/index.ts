@@ -17,9 +17,9 @@ serve(async (req) => {
       apiKey: Deno.env.get('OPENAI_API_KEY')
     });
 
-    const { textContent, context } = await req.json();
+    const { textContent, context, purpose } = await req.json();
 
-    console.log('Analyzing content:', { textContent, context });
+    console.log('Analyzing content:', { textContent, context, purpose });
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o",
@@ -64,7 +64,10 @@ Important rules:
         },
         {
           role: "user",
-          content: `Please analyze this content:\n${textContent}\nContext: ${context}`
+          content: `Please analyze this content:
+Tweet: ${textContent}
+Purpose: ${purpose || 'Not specified'}
+Context: ${context || 'Not specified'}`
         }
       ],
       response_format: { type: "json_object" }

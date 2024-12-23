@@ -27,6 +27,7 @@ interface AnalysisResult {
 export const ContentAnalyzerSection = () => {
   const [textContent, setTextContent] = useState("");
   const [context, setContext] = useState("");
+  const [purpose, setPurpose] = useState("");
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showWaitlist, setShowWaitlist] = useState(false);
@@ -47,7 +48,7 @@ export const ContentAnalyzerSection = () => {
     setIsAnalyzing(true);
     try {
       const { data: analysisData, error: analysisError } = await supabase.functions.invoke('analyze-content', {
-        body: { textContent, context },
+        body: { textContent, context, purpose },
       });
 
       if (analysisError) throw analysisError;
@@ -68,6 +69,7 @@ export const ContentAnalyzerSection = () => {
           data: { 
             content: textContent, 
             context,
+            purpose,
             analysis: analysisResults 
           }
         },
