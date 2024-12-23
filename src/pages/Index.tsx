@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2, Upload, AlertTriangle, CheckCircle, Lock } from "lucide-react";
 import { WaitlistModal } from "@/components/WaitlistModal";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const [textContent, setTextContent] = useState("");
