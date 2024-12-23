@@ -54,7 +54,9 @@ serve(async (req) => {
     console.log('Creating run with assistant');
     const run = await openai.beta.threads.runs.create(
       thread.id,
-      { assistant_id: assistantId }
+      { 
+        assistant_id: assistantId,
+      }
     );
 
     // Poll for completion
