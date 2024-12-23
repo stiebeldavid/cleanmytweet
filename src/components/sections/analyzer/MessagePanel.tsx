@@ -8,7 +8,7 @@ export const MessagePanel = () => {
         Tweet Analysis Made Simple
       </h2>
       <p className="text-lg text-gray-600">
-        Paste your tweet below and let our AI analyze it for potential controversies, ensuring your message stays on-brand and controversy-free.
+        About to post something awesome on X/Twitter? Let our AI check your draft for potential controversies or backlash, ensuring your message stays on-brand and controversy-free.
       </p>
     </div>
   );
