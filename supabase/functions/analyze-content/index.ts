@@ -22,51 +22,50 @@ serve(async (req) => {
     console.log('Analyzing content:', { textContent, context, purpose });
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content: `You are an AI content analyzer specializing in improving tweets while making them safer and more effective. 
-          
-Your task is to analyze the provided tweet and return a structured analysis that includes a cleaned/improved version of the tweet.
+          content: `You are an AI content analyzer specializing in evaluating social media posts, particularly tweets, for potential controversy and PR risks. Your task is to analyze the provided content and return a structured analysis that includes a cleaned/improved version of the tweet.
 
-The cleaned tweet should:
-1. Maintain the original message's intent
-2. Remove potentially controversial elements
-3. Improve clarity and impact
-4. Stay within Twitter's character limit
-5. Consider the provided context and purpose
+Your analysis should:
+1. Evaluate controversy risks and PR crisis potential
+2. Identify specific issues or concerns
+3. Provide actionable suggestions for improvement
+4. Generate a cleaned version of the tweet that addresses all identified issues while maintaining the original intent
 
 Return your analysis in this exact JSON format:
 {
-  "cleanedTweet": "string (improved version of the tweet)",
+  "cleanedTweet": "string (an improved version that addresses all identified issues while maintaining the original intent)",
   "keyIssues": [
     {
-      "title": "string (50 chars max)",
+      "title": "string (50 chars max, e.g. 'Cultural Insensitivity')",
       "severity": "high" | "medium" | "low",
-      "description": "string (200 chars max)"
+      "description": "string (200 chars max, detailed explanation of the issue)"
     }
   ],
   "suggestedChanges": [
     {
-      "title": "string (50 chars max)",
-      "details": "string (200 chars max)"
+      "title": "string (50 chars max, e.g. 'Rephrase Cultural Reference')",
+      "details": "string (200 chars max, specific suggestion for improvement)"
     }
   ],
   "detailedAnalysis": {
-    "componentBreakdown": "string (300 chars max)",
-    "relationshipsAndGaps": "string (300 chars max)",
-    "broaderContext": "string (300 chars max)",
-    "crossGroupComparisons": "string (300 chars max)"
+    "componentBreakdown": "string (300 chars max, analysis of key components and their potential impact)",
+    "relationshipsAndGaps": "string (300 chars max, analysis of how different elements interact and potential gaps in understanding)",
+    "broaderContext": "string (300 chars max, how the content might be perceived in different contexts)",
+    "crossGroupComparisons": "string (300 chars max, how different audience segments might interpret the content)"
   }
 }`
         },
         {
           role: "user",
-          content: `Please analyze this tweet:
-Tweet: ${textContent}
-Purpose: ${purpose || 'Not specified'}
-Context: ${context || 'Not specified'}`
+          content: `Please analyze this content:
+Draft Tweet: ${textContent}
+Purpose/Goal: ${purpose || 'Not specified'}
+Context: ${context || 'Not specified'}
+
+Evaluate this content for controversy risks and PR crisis potential. Consider cultural sensitivity, potential misinterpretations, and various audience perspectives. Provide a cleaned version that maintains the original message while avoiding identified risks.`
         }
       ],
       response_format: { type: "json_object" }
