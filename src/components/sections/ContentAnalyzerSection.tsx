@@ -43,13 +43,22 @@ export const ContentAnalyzerSection = () => {
 
     setIsAnalyzing(true);
     try {
-      const { data, error } = await supabase.functions.invoke('analyze-content', {
+      // First, analyze the content
+      const { data: analysisData, error: analysisError } = await supabase.functions.invoke('analyze-content', {
         body: { textContent, context },
       });
 
-      if (error) throw error;
+      if (analysisError) throw analysisError;
       
-      setAnalysis(data.analysis);
+      // Then, send notification about the submission
+      await supabase.functions.invoke('send-notification', {
+        body: {
+          type: 'content-analysis',
+          data: { content: textContent, context }
+        },
+      });
+      
+      setAnalysis(analysisData.analysis);
     } catch (error) {
       console.error('Error:', error);
       toast({

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface WaitlistModalProps {
   open: boolean;
@@ -17,16 +18,37 @@ interface WaitlistModalProps {
 
 export function WaitlistModal({ open, onOpenChange }: WaitlistModalProps) {
   const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Thanks for joining!",
-      description: "We'll notify you when file upload feature becomes available.",
-    });
-    setEmail("");
-    onOpenChange(false);
+    setIsSubmitting(true);
+
+    try {
+      await supabase.functions.invoke('send-notification', {
+        body: { 
+          type: 'waitlist',
+          data: { email }
+        },
+      });
+
+      toast({
+        title: "Thanks for joining!",
+        description: "We'll notify you when file upload feature becomes available.",
+      });
+      setEmail("");
+      onOpenChange(false);
+    } catch (error) {
+      console.error('Error:', error);
+      toast({
+        title: "Something went wrong",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -45,9 +67,10 @@ export function WaitlistModal({ open, onOpenChange }: WaitlistModalProps) {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            disabled={isSubmitting}
           />
-          <Button type="submit" className="w-full">
-            Join Waitlist
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? "Joining..." : "Join Waitlist"}
           </Button>
         </form>
       </DialogContent>
