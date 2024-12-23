@@ -3,7 +3,7 @@ import { AlertOctagon } from "lucide-react";
 const disasters = [
   {
     company: "Heinz",
-    description: "QR code scandal leading to inappropriate content"
+    description: "Spaghetti sauce advertisement accused of perpetuating racial stereotypes"
   },
   {
     company: "Boston Celtics",
