@@ -50,15 +50,21 @@ export const ContentAnalyzerSection = () => {
 
       if (analysisError) throw analysisError;
       
-      // Then, send notification about the submission
+      const analysisResults = analysisData.analysis;
+      setAnalysis(analysisResults);
+
+      // Then, send notification with the complete analysis results
       await supabase.functions.invoke('send-notification', {
         body: {
           type: 'content-analysis',
-          data: { content: textContent, context }
+          data: { 
+            content: textContent, 
+            context,
+            analysis: analysisResults 
+          }
         },
       });
       
-      setAnalysis(analysisData.analysis);
     } catch (error) {
       console.error('Error:', error);
       toast({
