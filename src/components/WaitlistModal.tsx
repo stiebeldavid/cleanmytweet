@@ -36,7 +36,7 @@ export function WaitlistModal({ open, onOpenChange }: WaitlistModalProps) {
 
       toast({
         title: "Thanks for joining!",
-        description: "We'll notify you when file upload feature becomes available.",
+        description: "We'll notify you when media analysis becomes available.",
       });
       setEmail("");
       onOpenChange(false);
@@ -58,7 +58,7 @@ export function WaitlistModal({ open, onOpenChange }: WaitlistModalProps) {
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-center mb-2">Join the Waitlist</DialogTitle>
           <DialogDescription className="text-center space-y-4">
-            <p className="text-lg">Be the first to experience our powerful file analysis features!</p>
+            <p className="text-lg">Coming soon: AI-powered media analysis for your tweets!</p>
             <div className="flex justify-center space-x-4 py-4">
               <div className="text-center">
                 <ImageIcon className="h-8 w-8 mx-auto mb-2 text-blue-500" />
@@ -77,9 +77,17 @@ export function WaitlistModal({ open, onOpenChange }: WaitlistModalProps) {
                 <span className="text-sm">PDFs</span>
               </div>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Get early access to our advanced AI-powered analysis for images, audio, video, and PDF files.
-            </p>
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">
+                Our AI will analyze your media content within the context of your tweet to:
+              </p>
+              <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
+                <li>Identify potential controversy risks</li>
+                <li>Detect sensitive or inappropriate content</li>
+                <li>Ensure brand safety and consistency</li>
+                <li>Suggest improvements for better engagement</li>
+              </ul>
+            </div>
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
