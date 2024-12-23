@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Loader2, Upload, PenTool, ImageIcon, Video, Twitter, Users } from "lucide-react";
+import { Loader2, Upload, PenTool, ImageIcon, Video, Twitter, Users, Target } from "lucide-react";
 import { WaitlistModal } from "@/components/WaitlistModal";
 import { useState } from "react";
 
@@ -27,6 +27,7 @@ export const InputPanel = ({
   onShowWaitlist,
 }: InputPanelProps) => {
   const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
+  const [purpose, setPurpose] = useState("");
 
   return (
     <div className="relative space-y-6 bg-gradient-to-br from-white to-cyan-50 p-6 rounded-xl shadow-lg border-2 border-cyan-200 hover:border-cyan-300 transition-all">
@@ -49,6 +50,21 @@ export const InputPanel = ({
           className="min-h-[120px] border-2 border-cyan-200 focus:border-cyan-400 focus:ring-cyan-400 bg-white shadow-inner"
           value={textContent}
           onChange={(e) => onTextContentChange(e.target.value)}
+        />
+      </div>
+
+      <div>
+        <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2 group">
+          <Target className="h-4 w-4 text-cyan-500 group-hover:text-cyan-600 transition-colors" />
+          <span className="bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent font-semibold">
+            Purpose or Goal (Optional)
+          </span>
+        </label>
+        <Input
+          placeholder="e.g. Holiday greeting for my followers; Let people know about my new product"
+          value={purpose}
+          onChange={(e) => setPurpose(e.target.value)}
+          className="border-2 border-cyan-200 focus:border-cyan-400 focus:ring-cyan-400 bg-white"
         />
       </div>
 
