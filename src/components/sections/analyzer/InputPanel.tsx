@@ -74,22 +74,16 @@ export const InputPanel = ({
           className="w-full mb-4 h-auto py-3 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white border-none relative overflow-hidden group"
         >
           <div className="absolute inset-0 bg-white/10 transform -skew-x-12 translate-x-full transition-transform group-hover:translate-x-0" />
-          <div className="flex flex-col items-center justify-center relative z-10 space-y-2">
-            <div className="flex items-center justify-center space-x-2">
+          <div className="flex items-center justify-center gap-4 relative z-10">
+            <div className="flex items-center gap-2">
               <Upload className="h-5 w-5" />
-              <span className="font-semibold text-base">Upload Media</span>
+              <span className="font-semibold">Upload Media</span>
             </div>
-            <div className="flex items-center justify-center space-x-8 py-1">
-              <div className="flex flex-col items-center">
-                <ImageIcon className="h-4 w-4 mb-1" />
-                <span className="text-xs">Images</span>
-              </div>
-              <div className="flex flex-col items-center">
-                <Video className="h-4 w-4 mb-1" />
-                <span className="text-xs">Video</span>
-              </div>
+            <div className="flex items-center gap-4">
+              <ImageIcon className="h-4 w-4" />
+              <Video className="h-4 w-4" />
+              <span className="text-sm italic">(Coming Soon!)</span>
             </div>
-            <span className="text-sm italic">Coming Soon!</span>
           </div>
         </Button>
 
