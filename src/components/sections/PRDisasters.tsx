@@ -7,7 +7,7 @@ const disasters = [
   },
   {
     company: "Boston Celtics",
-    description: "Social media post making light of a tragic mass shooting incident"
+    description: "Tone-deaf tweet combining game victory celebration with mass shooting condolences"
   },
   {
     company: "Dove Soap",
