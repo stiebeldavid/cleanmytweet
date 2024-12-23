@@ -65,7 +65,7 @@ export const InputPanel = ({
           <div className="absolute inset-0 bg-white/10 transform -skew-x-12 translate-x-full transition-transform group-hover:translate-x-0" />
           <div className="flex items-center justify-center space-x-2">
             <Upload className="h-4 w-4" />
-            <span className="font-semibold">Advanced File Analysis Coming Soon!</span>
+            <span className="font-semibold">Upload Images & Media (Coming Soon!)</span>
           </div>
           <div className="flex items-center justify-center mt-1 space-x-2 text-xs opacity-90">
             <ImageIcon className="h-3 w-3" />
