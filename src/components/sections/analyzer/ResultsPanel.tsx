@@ -1,5 +1,6 @@
-import { AlertTriangle, CheckCircle2 } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Copy } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { useToast } from "@/hooks/use-toast";
 
 interface AnalysisResult {
   cleanedTweet: string;
@@ -25,6 +26,8 @@ interface ResultsPanelProps {
 }
 
 export const ResultsPanel = ({ analysis }: ResultsPanelProps) => {
+  const { toast } = useToast();
+
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case 'high':
@@ -38,6 +41,17 @@ export const ResultsPanel = ({ analysis }: ResultsPanelProps) => {
     }
   };
 
+  const handleCopyTweet = async () => {
+    if (analysis?.cleanedTweet) {
+      await navigator.clipboard.writeText(analysis.cleanedTweet);
+      toast({
+        title: "Tweet Copied",
+        description: "The cleaned tweet has been copied to your clipboard",
+        duration: 2000,
+      });
+    }
+  };
+
   return (
     <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
       <h2 className="text-xl font-semibold mb-4 text-gray-800">
@@ -47,9 +61,18 @@ export const ResultsPanel = ({ analysis }: ResultsPanelProps) => {
         <div className="space-y-6">
           {/* Cleaned Tweet Section */}
           <div className="bg-gradient-to-r from-cyan-50 to-blue-50 p-4 rounded-lg border-2 border-cyan-200">
-            <div className="flex items-center gap-2 mb-2">
-              <CheckCircle2 className="h-5 w-5 text-cyan-600" />
-              <h3 className="font-semibold text-cyan-900">Cleaned Tweet</h3>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 mb-2">
+                <CheckCircle2 className="h-5 w-5 text-cyan-600" />
+                <h3 className="font-semibold text-cyan-900">Cleaned Tweet</h3>
+              </div>
+              <button
+                onClick={handleCopyTweet}
+                className="p-2 hover:bg-cyan-100 rounded-full transition-colors"
+                title="Copy tweet"
+              >
+                <Copy className="h-4 w-4 text-cyan-600" />
+              </button>
             </div>
             <p className="text-gray-800 font-medium">{analysis.cleanedTweet}</p>
           </div>
