@@ -98,7 +98,7 @@ export const InputPanel = ({
               Analyzing...
             </>
           ) : (
-            "Analyze Tweet"
+            "Clean My Tweet!"
           )}
         </Button>
       </div>
