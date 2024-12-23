@@ -7,7 +7,7 @@ const disasters = [
   },
   {
     company: "Boston Celtics",
-    description: "Social media hashtag automation disaster"
+    description: "Social media post making light of a tragic mass shooting incident"
   },
   {
     company: "Dove Soap",
