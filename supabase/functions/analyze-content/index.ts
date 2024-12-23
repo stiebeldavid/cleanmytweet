@@ -8,69 +8,48 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  console.log('Received request to analyze-content function');
-  
   if (req.method === 'OPTIONS') {
-    console.log('Handling CORS preflight request');
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    console.log('Initializing OpenAI client');
     const openai = new OpenAI({
       apiKey: Deno.env.get('OPENAI_API_KEY')
     });
 
     const { textContent, context, fileContent } = await req.json();
-    console.log('Received content:', { 
-      hasTextContent: Boolean(textContent), 
-      hasContext: Boolean(context), 
-      hasFileContent: Boolean(fileContent) 
-    });
 
-    // Prepare the content for analysis
     const contentToAnalyze = `
       ${textContent ? `Content: ${textContent}\n` : ''}
       ${context ? `Context: ${context}\n` : ''}
       ${fileContent ? `File Content: ${fileContent}\n` : ''}
     `;
 
-    const systemPrompt = `You are tasked with helping users review their draft ad campaigns by identifying potential unconscious biases, controversies, or risks. Follow this structured process:
+    const systemPrompt = `You are tasked with helping users review their draft ad campaigns by identifying potential unconscious biases, controversies, or risks. Follow the structured analysis process as before, but format your response as a JSON object with the following structure:
 
-1. Break Down Key Components and Research Identifiable People:
-- Analyze essential elements, context, and cultural significance
-- Research and evaluate any identifiable people's backgrounds
-- Consider location, symbols, and representation
+{
+  "keyIssues": [
+    {
+      "title": "Brief title of the issue",
+      "severity": "high|medium|low",
+      "description": "Detailed explanation of the issue"
+    }
+  ],
+  "suggestedChanges": [
+    {
+      "title": "Brief description of the suggested change",
+      "details": "Detailed explanation of how to implement the change and why it would help"
+    }
+  ],
+  "detailedAnalysis": {
+    "componentBreakdown": "Analysis of key components and identifiable people",
+    "relationshipsAndGaps": "Analysis of relationships and representation gaps",
+    "broaderContext": "Assessment of broader context",
+    "crossGroupComparisons": "Analysis of cross-group comparisons"
+  }
+}
 
-2. Explore Relationships and Representation Gaps:
-- Analyze family dynamics and structures
-- Identify missing groups or perspectives
-- Evaluate power dynamics and interactions
-
-3. Assess Broader Context:
-- Consider historical and cultural significance
-- Examine representation in light of current events
-- Analyze potential stereotypes or biases
-
-4. Identify Specific Risks:
-- Evaluate family structure portrayals
-- Assess power dynamics and hierarchies
-- Consider unintended associations
-
-5. Examine Cross-Group Comparisons:
-- Compare portrayals across different groups
-- Evaluate symbol and group associations
-- Analyze object-person relationships
-
-6. Provide Clear Recommendations:
-- Summarize key risks and controversies
-- Highlight the highest risk elements
-- Suggest 1-2 specific adjustments to mitigate risks
-
-Format your response with:
-- A detailed analysis following the above structure
-- A clear "HIGHEST RISK" section with 2-3 bullet points
-- A "SUGGESTED CHANGES" section with 1-2 specific recommendations`;
+Ensure your response is valid JSON and follows this exact structure. Each section should be thorough but concise.`;
 
     console.log('Making request to OpenAI Chat Completions API');
     const completion = await openai.chat.completions.create({
@@ -90,26 +69,18 @@ Format your response with:
     console.log('Received response from OpenAI');
     const analysis = completion.choices[0].message.content;
 
+    // Parse the response to ensure it's valid JSON
+    const parsedAnalysis = JSON.parse(analysis);
+
     return new Response(JSON.stringify({ 
-      analysis 
+      analysis: parsedAnalysis 
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
     console.error('Error in analyze-content function:', error);
-    console.error('Error details:', {
-      name: error.name,
-      message: error.message,
-      stack: error.stack
-    });
-    
     return new Response(JSON.stringify({ 
-      error: error.message,
-      details: {
-        name: error.name,
-        message: error.message,
-        stack: error.stack
-      }
+      error: error.message 
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

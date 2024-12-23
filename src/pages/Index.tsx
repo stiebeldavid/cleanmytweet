@@ -3,20 +3,38 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { Loader2, Upload, AlertTriangle, CheckCircle, Lock } from "lucide-react";
+import { Loader2, Upload, AlertTriangle, CheckCircle, Lock, AlertOctagon, ChevronDown, FileText } from "lucide-react";
 import { WaitlistModal } from "@/components/WaitlistModal";
 import { supabase } from "@/integrations/supabase/client";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+
+interface AnalysisResult {
+  keyIssues: {
+    title: string;
+    severity: 'high' | 'medium' | 'low';
+    description: string;
+  }[];
+  suggestedChanges: {
+    title: string;
+    details: string;
+  }[];
+  detailedAnalysis: {
+    componentBreakdown: string;
+    relationshipsAndGaps: string;
+    broaderContext: string;
+    crossGroupComparisons: string;
+  };
+}
 
 const Index = () => {
   const [textContent, setTextContent] = useState("");
   const [context, setContext] = useState("");
-  const [analysis, setAnalysis] = useState("");
+  const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showWaitlist, setShowWaitlist] = useState(false);
   const { toast } = useToast();
 
   const handleAnalyze = async () => {
-    console.log('Starting analysis');
     if (!textContent && !context) {
       toast({
         title: "Missing content",
@@ -44,6 +62,19 @@ const Index = () => {
       });
     } finally {
       setIsAnalyzing(false);
+    }
+  };
+
+  const getSeverityColor = (severity: string) => {
+    switch (severity) {
+      case 'high':
+        return 'text-red-600';
+      case 'medium':
+        return 'text-yellow-600';
+      case 'low':
+        return 'text-blue-600';
+      default:
+        return 'text-gray-600';
     }
   };
 
@@ -135,8 +166,74 @@ const Index = () => {
                 Analysis Results
               </h2>
               {analysis ? (
-                <div className="prose max-w-none">
-                  <div className="whitespace-pre-wrap text-gray-700">{analysis}</div>
+                <div className="space-y-6">
+                  {/* Key Issues Section */}
+                  <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value="key-issues">
+                      <AccordionTrigger className="flex items-center gap-2">
+                        <AlertOctagon className="h-5 w-5 text-red-500" />
+                        <span>Key Issues ({analysis.keyIssues.length})</span>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="space-y-4">
+                          {analysis.keyIssues.map((issue, index) => (
+                            <div key={index} className="border-l-4 border-red-500 pl-4 py-2">
+                              <h4 className={`font-medium ${getSeverityColor(issue.severity)}`}>
+                                {issue.title}
+                              </h4>
+                              <p className="text-gray-600 mt-1">{issue.description}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    {/* Suggested Changes Section */}
+                    <AccordionItem value="suggested-changes">
+                      <AccordionTrigger className="flex items-center gap-2">
+                        <ChevronDown className="h-5 w-5 text-green-500" />
+                        <span>Suggested Changes ({analysis.suggestedChanges.length})</span>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="space-y-4">
+                          {analysis.suggestedChanges.map((change, index) => (
+                            <div key={index} className="border-l-4 border-green-500 pl-4 py-2">
+                              <h4 className="font-medium text-green-700">{change.title}</h4>
+                              <p className="text-gray-600 mt-1">{change.details}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    {/* Detailed Analysis Section */}
+                    <AccordionItem value="detailed-analysis">
+                      <AccordionTrigger className="flex items-center gap-2">
+                        <FileText className="h-5 w-5 text-blue-500" />
+                        <span>Detailed Analysis</span>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="space-y-4">
+                          <div className="border-l-4 border-blue-500 pl-4 py-2">
+                            <h4 className="font-medium text-blue-700">Component Breakdown</h4>
+                            <p className="text-gray-600 mt-1">{analysis.detailedAnalysis.componentBreakdown}</p>
+                          </div>
+                          <div className="border-l-4 border-blue-500 pl-4 py-2">
+                            <h4 className="font-medium text-blue-700">Relationships & Gaps</h4>
+                            <p className="text-gray-600 mt-1">{analysis.detailedAnalysis.relationshipsAndGaps}</p>
+                          </div>
+                          <div className="border-l-4 border-blue-500 pl-4 py-2">
+                            <h4 className="font-medium text-blue-700">Broader Context</h4>
+                            <p className="text-gray-600 mt-1">{analysis.detailedAnalysis.broaderContext}</p>
+                          </div>
+                          <div className="border-l-4 border-blue-500 pl-4 py-2">
+                            <h4 className="font-medium text-blue-700">Cross-Group Comparisons</h4>
+                            <p className="text-gray-600 mt-1">{analysis.detailedAnalysis.crossGroupComparisons}</p>
+                          </div>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
                 </div>
               ) : (
                 <div className="text-gray-500 text-center py-12 bg-gray-50 rounded-lg">
