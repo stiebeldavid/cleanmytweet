@@ -17,73 +17,80 @@ serve(async (req) => {
       apiKey: Deno.env.get('OPENAI_API_KEY')
     });
 
-    const { textContent, context, fileContent } = await req.json();
+    const { textContent, context } = await req.json();
 
-    const contentToAnalyze = `
-      ${textContent ? `Content: ${textContent}\n` : ''}
-      ${context ? `Context: ${context}\n` : ''}
-      ${fileContent ? `File Content: ${fileContent}\n` : ''}
-    `;
+    console.log('Analyzing content:', { textContent, context });
 
-    const systemPrompt = `You are tasked with helping users review their draft ad campaigns by identifying potential unconscious biases, controversies, or risks. Follow the structured analysis process as before, but format your response as a JSON object with the following structure:
-
-{
-  "keyIssues": [
-    {
-      "title": "Brief title of the issue",
-      "severity": "high|medium|low",
-      "description": "Detailed explanation of the issue"
-    }
-  ],
-  "suggestedChanges": [
-    {
-      "title": "Brief description of the suggested change",
-      "details": "Detailed explanation of how to implement the change and why it would help"
-    }
-  ],
-  "detailedAnalysis": {
-    "componentBreakdown": "Analysis of key components and identifiable people",
-    "relationshipsAndGaps": "Analysis of relationships and representation gaps",
-    "broaderContext": "Assessment of broader context",
-    "crossGroupComparisons": "Analysis of cross-group comparisons"
-  }
-}
-
-Ensure your response is valid JSON and follows this exact structure. Each section should be thorough but concise.`;
-
-    console.log('Making request to OpenAI Chat Completions API');
     const completion = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
         {
           role: "system",
-          content: systemPrompt
+          content: `You are an AI assistant that helps users review their draft ad campaigns by identifying potential unconscious biases, controversies, or risks. Analyze the content and return a JSON response in the following exact format:
+
+{
+  "keyIssues": [
+    {
+      "title": "string",
+      "severity": "high" | "medium" | "low",
+      "description": "string"
+    }
+  ],
+  "suggestedChanges": [
+    {
+      "title": "string",
+      "details": "string"
+    }
+  ],
+  "detailedAnalysis": {
+    "componentBreakdown": "string",
+    "relationshipsAndGaps": "string",
+    "broaderContext": "string",
+    "crossGroupComparisons": "string"
+  }
+}
+
+Your response must be valid JSON. Do not include any markdown formatting, code blocks, or additional text outside of the JSON structure.`
         },
         {
           role: "user",
-          content: `Please analyze this content for potential controversy:\n${contentToAnalyze}`
+          content: `Please analyze this content:\n${textContent}\nContext: ${context}`
         }
-      ]
+      ],
+      response_format: { type: "json_object" }
     });
 
     console.log('Received response from OpenAI');
+    
     const analysis = completion.choices[0].message.content;
+    console.log('Analysis:', analysis);
 
-    // Parse the response to ensure it's valid JSON
+    // Parse the response to ensure it's valid JSON before sending
     const parsedAnalysis = JSON.parse(analysis);
 
-    return new Response(JSON.stringify({ 
-      analysis: parsedAnalysis 
-    }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({ analysis: parsedAnalysis }),
+      { 
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json' 
+        } 
+      }
+    );
   } catch (error) {
     console.error('Error in analyze-content function:', error);
-    return new Response(JSON.stringify({ 
-      error: error.message 
-    }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    
+    return new Response(
+      JSON.stringify({ 
+        error: error.message 
+      }), 
+      {
+        status: 500,
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json' 
+        }
+      }
+    );
   }
 });
