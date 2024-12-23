@@ -55,7 +55,7 @@ export const ResultsPanel = ({ analysis }: ResultsPanelProps) => {
   return (
     <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
       <h2 className="text-xl font-semibold mb-4 text-gray-800">
-        Analysis Results
+        Your Cleaned Tweet
       </h2>
       {analysis ? (
         <div className="space-y-6">
@@ -141,9 +141,18 @@ export const ResultsPanel = ({ analysis }: ResultsPanelProps) => {
           </Accordion>
         </div>
       ) : (
-        <div className="text-gray-500 text-center py-12 bg-gray-50 rounded-lg">
+        <div className="text-gray-500 space-y-4 py-8 px-4 bg-gray-50 rounded-lg text-center">
           <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-          Analysis results will appear here after you scan your content.
+          <h3 className="font-medium text-lg text-gray-700">Ready to Analyze Your Tweet</h3>
+          <p className="text-gray-600">
+            After scanning your content, you'll see:
+          </p>
+          <ul className="space-y-2 text-sm text-left list-disc pl-6">
+            <li>A cleaned version of your tweet that avoids potential controversies</li>
+            <li>Key issues identified in your content</li>
+            <li>Suggested improvements and alternatives</li>
+            <li>Detailed analysis of potential impacts and considerations</li>
+          </ul>
         </div>
       )}
     </div>
