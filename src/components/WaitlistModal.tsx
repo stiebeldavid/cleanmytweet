@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { FileIcon, ImageIcon, Video, FileAudio, FileText } from "lucide-react";
 
 interface WaitlistModalProps {
   open: boolean;
@@ -55,9 +56,30 @@ export function WaitlistModal({ open, onOpenChange }: WaitlistModalProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Join the Waitlist</DialogTitle>
-          <DialogDescription>
-            Be the first to know when our advanced file analysis feature launches!
+          <DialogTitle className="text-2xl font-bold text-center mb-2">Join the Waitlist</DialogTitle>
+          <DialogDescription className="text-center space-y-4">
+            <p className="text-lg">Be the first to experience our powerful file analysis features!</p>
+            <div className="flex justify-center space-x-4 py-4">
+              <div className="text-center">
+                <ImageIcon className="h-8 w-8 mx-auto mb-2 text-blue-500" />
+                <span className="text-sm">Images</span>
+              </div>
+              <div className="text-center">
+                <FileAudio className="h-8 w-8 mx-auto mb-2 text-purple-500" />
+                <span className="text-sm">Audio</span>
+              </div>
+              <div className="text-center">
+                <Video className="h-8 w-8 mx-auto mb-2 text-green-500" />
+                <span className="text-sm">Video</span>
+              </div>
+              <div className="text-center">
+                <FileText className="h-8 w-8 mx-auto mb-2 text-red-500" />
+                <span className="text-sm">PDFs</span>
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Get early access to our advanced AI-powered analysis for images, audio, video, and PDF files.
+            </p>
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
@@ -69,7 +91,11 @@ export function WaitlistModal({ open, onOpenChange }: WaitlistModalProps) {
             onChange={(e) => setEmail(e.target.value)}
             disabled={isSubmitting}
           />
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
+          <Button 
+            type="submit" 
+            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white" 
+            disabled={isSubmitting}
+          >
             {isSubmitting ? "Joining..." : "Join Waitlist"}
           </Button>
         </form>

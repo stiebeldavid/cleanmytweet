@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Loader2, Upload, PenTool } from "lucide-react";
+import { Loader2, Upload, PenTool, FileIcon, ImageIcon, Video, FileAudio, FileText } from "lucide-react";
 
 interface InputPanelProps {
   textContent: string;
@@ -60,10 +60,19 @@ export const InputPanel = ({
         <Button
           onClick={onShowWaitlist}
           variant="outline"
-          className="w-full mb-4 bg-gray-50 hover:bg-gray-100"
+          className="w-full mb-4 bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white border-none relative overflow-hidden group"
         >
-          <Upload className="mr-2 h-4 w-4" />
-          Upload File (Coming Soon)
+          <div className="absolute inset-0 bg-white/10 transform -skew-x-12 translate-x-full transition-transform group-hover:translate-x-0" />
+          <div className="flex items-center justify-center space-x-2">
+            <Upload className="h-4 w-4" />
+            <span className="font-semibold">Advanced File Analysis Coming Soon!</span>
+          </div>
+          <div className="flex items-center justify-center mt-1 space-x-2 text-xs opacity-90">
+            <ImageIcon className="h-3 w-3" />
+            <FileAudio className="h-3 w-3" />
+            <Video className="h-3 w-3" />
+            <FileText className="h-3 w-3" />
+          </div>
         </Button>
 
         <Button
