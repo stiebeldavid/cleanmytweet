@@ -1,6 +1,21 @@
-import { AlertTriangle, Fingerprint, Globe, MessageSquare } from "lucide-react";
+import { AlertTriangle, Fingerprint, Globe, MessageSquare, Shield, Clock, Check } from "lucide-react";
 
 const features = [
+  {
+    icon: Shield,
+    title: "Prevent Tweet Disasters",
+    description: "Stop controversial tweets before they go live."
+  },
+  {
+    icon: Clock,
+    title: "Quick Tweet Analysis",
+    description: "Get instant feedback on your tweets' potential impact."
+  },
+  {
+    icon: Check,
+    title: "Tweet with Confidence",
+    description: "Know your tweets are safe and on-brand before posting."
+  },
   {
     icon: AlertTriangle,
     title: "Tweet Risk Detection",
@@ -28,9 +43,9 @@ export const KeyFeatures = () => {
     <div className="py-16 px-4 bg-gray-50">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-          Why Choose CleanMyTweet?
+          Why Use CleanMyTweet?
         </h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
             <div key={index} className="bg-white p-6 rounded-lg shadow-sm">
               <feature.icon className="h-10 w-10 text-cyan-600 mb-4" />

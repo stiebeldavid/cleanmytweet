@@ -2,7 +2,6 @@ import { WaitlistModal } from "@/components/WaitlistModal";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { ProductOverview } from "@/components/sections/ProductOverview";
 import { KeyFeatures } from "@/components/sections/KeyFeatures";
-import { ValueProposition } from "@/components/sections/ValueProposition";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { KeyMetrics } from "@/components/sections/KeyMetrics";
 import { PRDisasters } from "@/components/sections/PRDisasters";
@@ -17,7 +16,6 @@ const Index = () => {
       </div>
       <ProductOverview />
       <KeyFeatures />
-      <ValueProposition />
       <Testimonials />
       <KeyMetrics />
       <PRDisasters />
