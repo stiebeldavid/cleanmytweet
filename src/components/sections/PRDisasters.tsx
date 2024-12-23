@@ -10,8 +10,8 @@ const disasters = [
     description: "Tone-deaf tweet combining game victory celebration with mass shooting condolences"
   },
   {
-    company: "Dove Soap",
-    description: "Controversial advertisement depicting racial insensitivity in soap product marketing"
+    company: "DraftKings",
+    description: "Faced backlash for promoting gambling bet combinations related to September 11 attacks anniversary"
   }
 ];
 
