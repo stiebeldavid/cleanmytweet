@@ -9,7 +9,7 @@ export const HeroSection = () => {
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 to-teal-200 mt-1">
               Before They Go Viral
             </span>
-            <span className="block text-sm italic text-right text-cyan-200/70 mt-1">
+            <span className="block text-base italic text-center text-cyan-200/70 mt-1">
               (...for the wrong reason)
             </span>
           </div>
