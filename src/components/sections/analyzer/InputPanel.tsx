@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Loader2, Upload, PenTool, FileIcon, ImageIcon, Video, FileAudio, FileText } from "lucide-react";
+import { Loader2, Upload, PenTool, FileIcon, ImageIcon, Video, FileAudio, FileText, Twitter } from "lucide-react";
 import { WaitlistModal } from "@/components/WaitlistModal";
 import { useState } from "react";
 
@@ -38,8 +38,11 @@ export const InputPanel = ({
       </div>
 
       <div className="mt-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Tweet to Analyze
+        <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2 group">
+          <Twitter className="h-4 w-4 text-cyan-500 group-hover:text-cyan-600 transition-colors" />
+          <span className="bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent font-semibold">
+            Draft Tweet to Analyze
+          </span>
         </label>
         <Textarea
           placeholder="Paste your tweet here..."
