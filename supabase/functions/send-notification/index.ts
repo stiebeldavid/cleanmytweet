@@ -1,78 +1,50 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
-const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-const ADMIN_EMAIL = Deno.env.get("ADMIN_EMAIL");
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
-interface NotificationRequest {
-  type: 'content-analysis' | 'waitlist';
-  data: {
-    email?: string;
-    content?: string;
-    context?: string;
-  };
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    const { type, data }: NotificationRequest = await req.json();
+    const { type, data } = await req.json()
 
-    let subject = '';
-    let html = '';
+    if (type === 'waitlist') {
+      const { email } = data
+      
+      // Initialize Supabase client with admin privileges
+      const supabaseAdmin = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      )
 
-    if (type === 'content-analysis') {
-      subject = 'New Content Analysis Submission';
-      html = `
-        <h2>New Content Analysis Submission</h2>
-        <p><strong>Content:</strong> ${data.content || 'N/A'}</p>
-        <p><strong>Context:</strong> ${data.context || 'N/A'}</p>
-      `;
-    } else if (type === 'waitlist') {
-      subject = 'New Waitlist Signup';
-      html = `
-        <h2>New Waitlist Signup</h2>
-        <p><strong>Email:</strong> ${data.email}</p>
-      `;
+      // Send email notification to admin
+      const { error: resendError } = await supabaseAdmin.functions.invoke('send-email', {
+        body: {
+          to: Deno.env.get('ADMIN_EMAIL'),
+          subject: 'New Waitlist Signup',
+          text: `New user joined the waitlist: ${email}`,
+        },
+      })
+
+      if (resendError) throw resendError
+
+      return new Response(
+        JSON.stringify({ message: 'Notification sent successfully' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+      )
     }
 
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${RESEND_API_KEY}`,
-      },
-      body: JSON.stringify({
-        from: "Clairity <admin@mysittersquad.com>",
-        to: [ADMIN_EMAIL],
-        subject,
-        html,
-      }),
-    });
-
-    if (!res.ok) {
-      throw new Error(`Failed to send email: ${await res.text()}`);
-    }
-
-    return new Response(JSON.stringify({ success: true }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    throw new Error('Invalid notification type')
   } catch (error) {
-    console.error("Error sending notification:", error);
     return new Response(
       JSON.stringify({ error: error.message }),
-      { 
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
-    );
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+    )
   }
-});
+})

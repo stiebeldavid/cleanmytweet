@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Loader2, Upload, PenTool, FileIcon, ImageIcon, Video, FileAudio, FileText } from "lucide-react";
+import { WaitlistModal } from "@/components/WaitlistModal";
+import { useState } from "react";
 
 interface InputPanelProps {
   textContent: string;
@@ -24,6 +26,8 @@ export const InputPanel = ({
   onAnalyze,
   onShowWaitlist,
 }: InputPanelProps) => {
+  const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
+
   return (
     <div className="relative space-y-6 bg-white p-6 rounded-xl shadow-lg border border-gray-100">
       <div className="absolute -top-3 -left-3 transform -rotate-6">
@@ -58,7 +62,7 @@ export const InputPanel = ({
 
       <div>
         <Button
-          onClick={onShowWaitlist}
+          onClick={() => setIsWaitlistOpen(true)}
           variant="outline"
           className="w-full mb-4 h-auto py-3 bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white border-none relative overflow-hidden group"
         >
@@ -105,6 +109,11 @@ export const InputPanel = ({
           )}
         </Button>
       </div>
+
+      <WaitlistModal 
+        open={isWaitlistOpen} 
+        onOpenChange={setIsWaitlistOpen} 
+      />
     </div>
   );
 };
