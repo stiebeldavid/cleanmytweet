@@ -8,10 +8,12 @@ import { useState } from "react";
 interface InputPanelProps {
   textContent: string;
   context: string;
+  purpose: string;
   isAnalyzing: boolean;
   showWaitlist: boolean;
   onTextContentChange: (value: string) => void;
   onContextChange: (value: string) => void;
+  onPurposeChange: (value: string) => void;
   onAnalyze: () => void;
   onShowWaitlist: () => void;
 }
@@ -19,15 +21,16 @@ interface InputPanelProps {
 export const InputPanel = ({
   textContent,
   context,
+  purpose,
   isAnalyzing,
   showWaitlist,
   onTextContentChange,
   onContextChange,
+  onPurposeChange,
   onAnalyze,
   onShowWaitlist,
 }: InputPanelProps) => {
   const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
-  const [purpose, setPurpose] = useState("");
 
   return (
     <div className="relative space-y-6 bg-gradient-to-br from-white to-cyan-50 p-6 rounded-xl shadow-lg border-2 border-cyan-200 hover:border-cyan-300 transition-all">
@@ -63,7 +66,7 @@ export const InputPanel = ({
         <Input
           placeholder="e.g. Holiday greeting for my followers; Let people know about my new product"
           value={purpose}
-          onChange={(e) => setPurpose(e.target.value)}
+          onChange={(e) => onPurposeChange(e.target.value)}
           className="border-2 border-cyan-200 focus:border-cyan-400 focus:ring-cyan-400 bg-white"
         />
       </div>
