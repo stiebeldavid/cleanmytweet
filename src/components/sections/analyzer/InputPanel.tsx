@@ -29,9 +29,9 @@ export const InputPanel = ({
   const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
 
   return (
-    <div className="relative space-y-6 bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+    <div className="relative space-y-6 bg-gradient-to-br from-white to-purple-50 p-6 rounded-xl shadow-lg border-2 border-purple-200 hover:border-purple-300 transition-all">
       <div className="absolute -top-3 -left-3 transform -rotate-6">
-        <div className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg">
+        <div className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2 rounded-lg shadow-lg">
           <PenTool className="h-4 w-4" />
           <span className="font-bold">Analyze Your Content Here!</span>
         </div>
@@ -43,7 +43,7 @@ export const InputPanel = ({
         </label>
         <Textarea
           placeholder="Paste your social media post or content here..."
-          className="min-h-[120px]"
+          className="min-h-[120px] border-2 border-purple-200 focus:border-purple-400 focus:ring-purple-400 bg-white shadow-inner"
           value={textContent}
           onChange={(e) => onTextContentChange(e.target.value)}
         />
@@ -57,6 +57,7 @@ export const InputPanel = ({
           placeholder="Brand/company context or target audience..."
           value={context}
           onChange={(e) => onContextChange(e.target.value)}
+          className="border-2 border-purple-200 focus:border-purple-400 focus:ring-purple-400 bg-white"
         />
       </div>
 
@@ -64,7 +65,7 @@ export const InputPanel = ({
         <Button
           onClick={() => setIsWaitlistOpen(true)}
           variant="outline"
-          className="w-full mb-4 h-auto py-3 bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white border-none relative overflow-hidden group"
+          className="w-full mb-4 h-auto py-3 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white border-none relative overflow-hidden group"
         >
           <div className="absolute inset-0 bg-white/10 transform -skew-x-12 translate-x-full transition-transform group-hover:translate-x-0" />
           <div className="flex flex-col items-center justify-center relative z-10 space-y-2">
@@ -97,7 +98,7 @@ export const InputPanel = ({
         <Button
           onClick={onAnalyze}
           disabled={isAnalyzing || (!textContent && !context)}
-          className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+          className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg transform transition-all hover:scale-[1.02] disabled:hover:scale-100"
         >
           {isAnalyzing ? (
             <>
