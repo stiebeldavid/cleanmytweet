@@ -20,7 +20,7 @@ export const ContentAnalyzerSection = () => {
   } = useContentAnalyzer();
 
   return (
-    <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+    <div className="content-analyzer-section grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
       <MessagePanel />
       <InputPanel
         textContent={textContent}
