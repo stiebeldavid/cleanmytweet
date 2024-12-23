@@ -6,7 +6,7 @@ const testimonials = [
     author: "Marketing Expert"
   },
   {
-    quote: "Central marketing sets so many rules; it's hard to follow. Clairity saves time and reduces manual review time",
+    quote: "Central marketing sets so many rules; it's hard to follow. CleanMyTweet saves time and reduces manual review time",
     author: "Brand Manager"
   }
 ];
