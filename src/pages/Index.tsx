@@ -15,9 +15,9 @@ const Index = () => {
       <div className="container mx-auto py-12 px-4">
         <ContentAnalyzerSection />
       </div>
+      <ProductOverview />
       <KeyFeatures />
       <ValueProposition />
-      <ProductOverview />
       <Testimonials />
       <KeyMetrics />
       <PRDisasters />
