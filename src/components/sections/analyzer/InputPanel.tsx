@@ -60,18 +60,32 @@ export const InputPanel = ({
         <Button
           onClick={onShowWaitlist}
           variant="outline"
-          className="w-full mb-4 bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white border-none relative overflow-hidden group"
+          className="w-full mb-4 h-auto py-3 bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white border-none relative overflow-hidden group"
         >
           <div className="absolute inset-0 bg-white/10 transform -skew-x-12 translate-x-full transition-transform group-hover:translate-x-0" />
-          <div className="flex items-center justify-center space-x-2">
-            <Upload className="h-4 w-4" />
-            <span className="font-semibold">Upload Images & Media (Coming Soon!)</span>
-          </div>
-          <div className="flex items-center justify-center mt-1 space-x-2 text-xs opacity-90">
-            <ImageIcon className="h-3 w-3" />
-            <FileAudio className="h-3 w-3" />
-            <Video className="h-3 w-3" />
-            <FileText className="h-3 w-3" />
+          <div className="flex flex-col items-center justify-center relative z-10 space-y-2">
+            <div className="flex items-center justify-center space-x-2">
+              <Upload className="h-5 w-5" />
+              <span className="font-semibold text-base">Upload Images & Media (Coming Soon!)</span>
+            </div>
+            <div className="flex items-center justify-center space-x-4 py-1">
+              <div className="flex flex-col items-center">
+                <ImageIcon className="h-4 w-4 mb-1" />
+                <span className="text-xs">Images</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <FileAudio className="h-4 w-4 mb-1" />
+                <span className="text-xs">Audio</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <Video className="h-4 w-4 mb-1" />
+                <span className="text-xs">Video</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <FileText className="h-4 w-4 mb-1" />
+                <span className="text-xs">PDFs</span>
+              </div>
+            </div>
           </div>
         </Button>
 
