@@ -45,31 +45,8 @@ Content Evaluation: Consider the following elements in your analysis:
 
 Additional Guidance:
 - If you determine that the content is likely acceptable with no significant issues, clearly state this in your response without highlighting irrelevant concerns.
-- Focus on constructive feedback that enhances understanding and improves the content where necessary.
-
-Return your analysis in this exact JSON format:
-{
-  "cleanedTweet": "string (an improved version that addresses any identified issues while maintaining the original intent)",
-  "keyIssues": [
-    {
-      "title": "string (50 chars max, e.g., 'Cultural Sensitivity')",
-      "severity": "high" | "medium" | "low",
-      "description": "string (200 chars max, detailed explanation of the issue)"
-    }
-  ],
-  "suggestedChanges": [
-    {
-      "title": "string (50 chars max, e.g., 'Rephrase Cultural Reference')",
-      "details": "string (200 chars max, specific suggestion for improvement)"
-    }
-  ],
-  "detailedAnalysis": {
-    "componentBreakdown": "string (300 chars max, analysis of key components and their potential impact)",
-    "relationshipsAndGaps": "string (300 chars max, analysis of how different elements interact and potential gaps in understanding)",
-    "broaderContext": "string (300 chars max, how the content might be perceived in different contexts)",
-    "crossGroupComparisons": "string (300 chars max, how different audience segments might interpret the content)"
-  }
-}`
+- If you suggest splitting the message into multiple tweets, provide at least two cleaned tweets in the cleanedTweets array.
+- Focus on constructive feedback that enhances understanding and improves the content where necessary.`
         },
         {
           role: "user",
@@ -78,7 +55,7 @@ Draft Tweet: ${textContent}
 Purpose/Goal: ${purpose || 'Not specified'}
 Context: ${context || 'Not specified'}
 
-Evaluate this content for controversy risks and PR crisis potential. Consider cultural sensitivity, potential misinterpretations, and various audience perspectives. Provide a cleaned version that maintains the original message while avoiding identified risks.`
+Evaluate this content for controversy risks and PR crisis potential. Consider cultural sensitivity, potential misinterpretations, and various audience perspectives. Provide cleaned version(s) that maintain the original message while avoiding identified risks.`
         }
       ],
       response_format: { type: "json_object" }

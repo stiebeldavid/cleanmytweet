@@ -1,29 +1,20 @@
-import { AlertTriangle, CheckCircle2, Copy } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Copy, AlertCircle, ShieldAlert } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
-
-interface AnalysisResult {
-  cleanedTweet: string;
-  keyIssues: {
-    title: string;
-    severity: 'high' | 'medium' | 'low';
-    description: string;
-  }[];
-  suggestedChanges: {
-    title: string;
-    details: string;
-  }[];
-  detailedAnalysis: {
-    componentBreakdown: string;
-    relationshipsAndGaps: string;
-    broaderContext: string;
-    crossGroupComparisons: string;
-  };
-}
+import { CleanedTweet } from "@/types/analyzer";
 
 interface ResultsPanelProps {
-  analysis: AnalysisResult | null;
+  analysis: {
+    overallRisk: 'high' | 'medium' | 'low';
+    cleanedTweets: CleanedTweet[];
+    detailedAnalysis: {
+      componentBreakdown: string;
+      relationshipsAndGaps: string;
+      broaderContext: string;
+      crossGroupComparisons: string;
+    };
+  } | null;
   isAnalyzing?: boolean;
 }
 
@@ -66,15 +57,35 @@ export const ResultsPanel = ({ analysis, isAnalyzing = false }: ResultsPanelProp
     }
   };
 
-  const handleCopyTweet = async () => {
-    if (analysis?.cleanedTweet) {
-      await navigator.clipboard.writeText(analysis.cleanedTweet);
-      toast({
-        title: "Tweet Copied",
-        description: "The cleaned tweet has been copied to your clipboard",
-        duration: 2000,
-      });
+  const getRiskIcon = (risk: 'high' | 'medium' | 'low') => {
+    switch (risk) {
+      case 'high':
+        return <ShieldAlert className="h-12 w-12 text-red-500" />;
+      case 'medium':
+        return <AlertCircle className="h-12 w-12 text-yellow-500" />;
+      case 'low':
+        return <CheckCircle2 className="h-12 w-12 text-green-500" />;
     }
+  };
+
+  const getRiskBackground = (risk: 'high' | 'medium' | 'low') => {
+    switch (risk) {
+      case 'high':
+        return 'bg-red-50 border-red-200';
+      case 'medium':
+        return 'bg-yellow-50 border-yellow-200';
+      case 'low':
+        return 'bg-green-50 border-green-200';
+    }
+  };
+
+  const handleCopyTweet = async (tweet: string) => {
+    await navigator.clipboard.writeText(tweet);
+    toast({
+      title: "Tweet Copied",
+      description: "The cleaned tweet has been copied to your clipboard",
+      duration: 2000,
+    });
   };
 
   return (
@@ -95,60 +106,75 @@ export const ResultsPanel = ({ analysis, isAnalyzing = false }: ResultsPanelProp
         </div>
       ) : analysis ? (
         <div className="space-y-6">
-          {/* Cleaned Tweet Section */}
-          <div className="bg-gradient-to-r from-cyan-50 to-blue-50 p-4 rounded-lg border-2 border-cyan-200">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 mb-2">
-                <CheckCircle2 className="h-5 w-5 text-cyan-600" />
-                <h3 className="font-semibold text-cyan-900">Cleaned Tweet</h3>
-              </div>
-              <button
-                onClick={handleCopyTweet}
-                className="p-2 hover:bg-cyan-100 rounded-full transition-colors"
-                title="Copy tweet"
-              >
-                <Copy className="h-4 w-4 text-cyan-600" />
-              </button>
+          {/* Overall Risk Section */}
+          <div className={`p-4 rounded-lg border-2 ${getRiskBackground(analysis.overallRisk)} flex items-center gap-4`}>
+            {getRiskIcon(analysis.overallRisk)}
+            <div>
+              <h3 className="font-semibold text-lg capitalize">
+                {analysis.overallRisk} Risk Level
+              </h3>
+              <p className="text-gray-600">
+                {analysis.overallRisk === 'low' ? 'This content appears safe to post.' :
+                 analysis.overallRisk === 'medium' ? 'Consider the suggested changes before posting.' :
+                 'Review carefully before proceeding.'}
+              </p>
             </div>
-            <p className="text-gray-800 font-medium">{analysis.cleanedTweet}</p>
           </div>
 
-          <Accordion type="single" collapsible defaultValue="key-issues" className="w-full">
-            <AccordionItem value="key-issues">
-              <AccordionTrigger className="flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-red-500" />
-                <span>Key Issues ({analysis.keyIssues.length})</span>
-              </AccordionTrigger>
-              <AccordionContent>
-                <div className="space-y-4">
-                  {analysis.keyIssues.map((issue, index) => (
-                    <div key={index} className="border-l-4 border-red-500 pl-4 py-2">
-                      <h4 className={`font-medium ${getSeverityColor(issue.severity)}`}>
-                        {issue.title}
-                      </h4>
-                      <p className="text-gray-600 mt-1">{issue.description}</p>
-                    </div>
-                  ))}
+          {/* Cleaned Tweets Section */}
+          <div className="space-y-4">
+            {analysis.cleanedTweets.map((tweet, tweetIndex) => (
+              <div key={tweetIndex} className="bg-gradient-to-r from-cyan-50 to-blue-50 p-4 rounded-lg border-2 border-cyan-200">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 mb-2">
+                    <CheckCircle2 className="h-5 w-5 text-cyan-600" />
+                    <h3 className="font-semibold text-cyan-900">
+                      {analysis.cleanedTweets.length > 1 ? `Cleaned Tweet ${tweetIndex + 1}` : 'Cleaned Tweet'}
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => handleCopyTweet(tweet.cleanedTweet)}
+                    className="p-2 hover:bg-cyan-100 rounded-full transition-colors"
+                    title="Copy tweet"
+                  >
+                    <Copy className="h-4 w-4 text-cyan-600" />
+                  </button>
                 </div>
-              </AccordionContent>
-            </AccordionItem>
+                <p className="text-gray-800 font-medium">{tweet.cleanedTweet}</p>
 
-            <AccordionItem value="suggested-changes">
-              <AccordionTrigger>
-                <span>Suggested Changes ({analysis.suggestedChanges.length})</span>
-              </AccordionTrigger>
-              <AccordionContent>
-                <div className="space-y-4">
-                  {analysis.suggestedChanges.map((change, index) => (
-                    <div key={index} className="border-l-4 border-green-500 pl-4 py-2">
-                      <h4 className="font-medium text-green-700">{change.title}</h4>
-                      <p className="text-gray-600 mt-1">{change.details}</p>
-                    </div>
-                  ))}
-                </div>
-              </AccordionContent>
-            </AccordionItem>
+                {/* Issues for this tweet */}
+                {tweet.keyIssues.length > 0 && (
+                  <div className="mt-4 space-y-2">
+                    <h4 className="font-medium text-gray-700">Key Issues:</h4>
+                    {tweet.keyIssues.map((issue, index) => (
+                      <div key={index} className={`border-l-4 border-${getSeverityColor(issue.severity)} pl-4 py-2`}>
+                        <h5 className={`font-medium ${getSeverityColor(issue.severity)}`}>
+                          {issue.title}
+                        </h5>
+                        <p className="text-gray-600 mt-1">{issue.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
 
+                {/* Suggested changes for this tweet */}
+                {tweet.suggestedChanges.length > 0 && (
+                  <div className="mt-4 space-y-2">
+                    <h4 className="font-medium text-gray-700">Suggested Changes:</h4>
+                    {tweet.suggestedChanges.map((change, index) => (
+                      <div key={index} className="border-l-4 border-green-500 pl-4 py-2">
+                        <h5 className="font-medium text-green-700">{change.title}</h5>
+                        <p className="text-gray-600 mt-1">{change.details}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Detailed Analysis Section */}
+          <Accordion type="single" collapsible defaultValue="detailed-analysis">
             <AccordionItem value="detailed-analysis">
               <AccordionTrigger>
                 <span>Detailed Analysis</span>
@@ -184,7 +210,8 @@ export const ResultsPanel = ({ analysis, isAnalyzing = false }: ResultsPanelProp
             After scanning your content, you'll see:
           </p>
           <ul className="space-y-2 text-sm text-left list-disc pl-6">
-            <li>A cleaned version of your tweet that avoids potential controversies</li>
+            <li>Overall risk assessment of your content</li>
+            <li>One or more cleaned versions of your tweet</li>
             <li>Key issues identified in your content</li>
             <li>Suggested improvements and alternatives</li>
             <li>Detailed analysis of potential impacts and considerations</li>

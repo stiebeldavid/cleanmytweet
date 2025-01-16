@@ -1,4 +1,4 @@
-export interface AnalysisResult {
+export interface CleanedTweet {
   cleanedTweet: string;
   keyIssues: {
     title: string;
@@ -9,6 +9,11 @@ export interface AnalysisResult {
     title: string;
     details: string;
   }[];
+}
+
+export interface AnalysisResult {
+  overallRisk: 'high' | 'medium' | 'low';
+  cleanedTweets: CleanedTweet[];
   detailedAnalysis: {
     componentBreakdown: string;
     relationshipsAndGaps: string;
