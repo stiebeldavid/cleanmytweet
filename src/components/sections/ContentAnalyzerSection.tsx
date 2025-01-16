@@ -35,7 +35,7 @@ export const ContentAnalyzerSection = () => {
         onShowWaitlist={() => setShowWaitlist(true)}
       />
       <div ref={resultsRef}>
-        <ResultsPanel analysis={analysis} />
+        <ResultsPanel analysis={analysis} isAnalyzing={isAnalyzing} />
       </div>
     </div>
   );

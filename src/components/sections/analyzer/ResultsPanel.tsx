@@ -1,6 +1,7 @@
 import { AlertTriangle, CheckCircle2, Copy } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useToast } from "@/hooks/use-toast";
+import { useEffect, useState } from "react";
 
 interface AnalysisResult {
   cleanedTweet: string;
@@ -23,10 +24,34 @@ interface AnalysisResult {
 
 interface ResultsPanelProps {
   analysis: AnalysisResult | null;
+  isAnalyzing?: boolean;
 }
 
-export const ResultsPanel = ({ analysis }: ResultsPanelProps) => {
+export const ResultsPanel = ({ analysis, isAnalyzing = false }: ResultsPanelProps) => {
   const { toast } = useToast();
+  const [loadingMessage, setLoadingMessage] = useState("");
+  const loadingMessages = [
+    "Analyzing tweet...",
+    "Considering context...",
+    "Simulating audience responses...",
+    "Evaluating potential issues...",
+    "Preparing recommendations..."
+  ];
+
+  useEffect(() => {
+    if (!isAnalyzing) {
+      setLoadingMessage("");
+      return;
+    }
+
+    let currentIndex = 0;
+    const interval = setInterval(() => {
+      setLoadingMessage(loadingMessages[currentIndex]);
+      currentIndex = (currentIndex + 1) % loadingMessages.length;
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [isAnalyzing]);
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
@@ -57,7 +82,18 @@ export const ResultsPanel = ({ analysis }: ResultsPanelProps) => {
       <h2 className="text-xl font-semibold mb-4 text-gray-800">
         Your Cleaned Tweet
       </h2>
-      {analysis ? (
+      {isAnalyzing ? (
+        <div className="min-h-[200px] flex items-center justify-center">
+          <div className="space-y-4">
+            <div className="animate-pulse">
+              <div className="h-4 w-48 bg-gray-200 rounded mx-auto"></div>
+            </div>
+            <p className="text-gray-600 animate-fade-in">
+              {loadingMessage}
+            </p>
+          </div>
+        </div>
+      ) : analysis ? (
         <div className="space-y-6">
           {/* Cleaned Tweet Section */}
           <div className="bg-gradient-to-r from-cyan-50 to-blue-50 p-4 rounded-lg border-2 border-cyan-200">
