@@ -1,8 +1,4 @@
 project_id = "blxcpnxrlumglilntxav"
 
-[api]
-enabled = true
-url = "https://blxcpnxrlumglilntxav.supabase.co"
-
 [functions.analyze-content]
 verify_jwt = false
